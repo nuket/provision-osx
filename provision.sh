@@ -1,14 +1,20 @@
 #!/bin/bash
 
+# Utility functions
+
+# Check if process is running and unload if necessary.
+
+function checkUnload() {
+}
+
 # Launch Daemons
 
 # Disable Apple Push Notification Service daemon
 # https://apple.stackexchange.com/questions/92214/how-to-disable-apple-push-notification-service-apsd-on-os-x-10-8
 sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.apsd.plist
 
-# Disable Spotlight
-# http://osxdaily.com/2011/12/10/disable-or-enable-spotlight-in-mac-os-x-lion/
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
+# Disable CalendarAgent
+launchctl unload -w /System/Library/LaunchAgents/com.apple.CalendarAgent.plist
 
 # Disable NetBIOS daemon (netbiosd)
 sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.netbiosd.plist
@@ -23,6 +29,10 @@ sudo launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcent
 # Disable QuickLook
 # https://superuser.com/questions/617658/quicklooksatellite-mac-os-high-cpu-use
 sudo launchctl unload -w /System/Library/LaunchAgents/com.apple.quicklook.*
+
+# Disable Spotlight
+# http://osxdaily.com/2011/12/10/disable-or-enable-spotlight-in-mac-os-x-lion/
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 
 # Disabling Maverick's Unicast ARP Cache Validation Script (thanks, MMV!)
 bash <(curl -Ls http://git.io/6YzLCw)
@@ -41,3 +51,7 @@ sudo mv /System/Library/LaunchAgents/com.apple.gamed.plist ${DISABLE_DIR}
 # Disable Airplay Mirroring
 # http://www.ehcho.com/guide/disable-airplay-mirroring/
 sudo mv /System/Library/LaunchAgents/com.apple.AirPlayUIAgent.plist ${DISABLE_DIR}
+
+# Install Applications
+
+# Check for existence, download, and run installer(8) on these apps.
