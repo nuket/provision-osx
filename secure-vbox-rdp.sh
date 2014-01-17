@@ -27,7 +27,7 @@ done
 createUser () {
     VBoxManage setproperty vrdeauthlibrary "VBoxAuthSimple"
     VBoxManage modifyvm "${VM_NAME}" --vrdeauthtype external
-    HASH=$(VBoxManage internalcommands passwordhash "${PASSWORD}")
+    HASH=$(VBoxManage internalcommands passwordhash "${PASSWORD}" | sed "s_Password hash: __g")
     VBoxManage setextradata "${VM_NAME}" "VBoxAuthSimple/users/${USERNAME}" "${HASH}"
 }
 
@@ -39,6 +39,7 @@ createCertificate () {
 
 	# Don't overwrite common certificates.
 	if [ -f "${VM_PATH}/ca_cert.pem" ] && [ -f "${VM_PATH}/server_cert.pem" ] && [ -f "${VM_PATH}/server_key_private.pem" ]; then
+	    echo "Don't overwrite common certificates."
 	    return
 	fi
     fi
@@ -54,7 +55,6 @@ createCertificate () {
     VBoxManage modifyvm "${VM_NAME}" --vrdeproperty "Security/ServerCertificate=${VM_PATH}/server_cert.pem"
     VBoxManage modifyvm "${VM_NAME}" --vrdeproperty "Security/ServerPrivateKey=${VM_PATH}/server_key_private.pem"
 }
-
 
 usage () {
     echo ""
