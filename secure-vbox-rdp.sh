@@ -111,6 +111,7 @@ nullAuth() {
     VBoxManage modifyvm "${VM_NAME}" --vrdeauthtype "null"
     VBoxManage modifyvm "${VM_NAME}" --vrdeaddress  "127.0.0.1"
     VBoxManage modifyvm "${VM_NAME}" --vrdeport     "${VRDE_PORT}"
+    VBoxManage modifyvm "${VM_NAME}" --vrdemulticon "on"
 
     echo "You can now connect to the VM at localhost:${VRDE_PORT}."
 }
