@@ -2,11 +2,6 @@
 
 # Utility functions
 
-# Check if process is running and unload if necessary.
-
-function checkUnload() {
-}
-
 # Launch Daemons
 
 # Disable Apple Push Notification Service daemon
@@ -55,3 +50,47 @@ sudo mv /System/Library/LaunchAgents/com.apple.AirPlayUIAgent.plist ${DISABLE_DI
 # Install Applications
 
 # Check for existence, download, and run installer(8) on these apps.
+
+# If VirtualBox's vboxautostart.plist file is available, copy it to 
+# the /Library/LaunchDaemons folder and enable it.
+#
+# Set up the /etc/vbox/autostart.cfg file to just allow all users
+# on the OS X host to start virtual machines. (No security here.)
+#
+# Don't start the autostart just yet though.
+
+VBOX_AUTOSTART_SOURCE=/Applications/VirtualBox.app/Contents/MacOS/org.virtualbox.vboxautostart.plist
+VBOX_AUTOSTART_TARGET=/Library/LaunchDaemons/org.virtualbox.vboxautostart.plist
+
+VBOX_AUTOSTARTDB_FOLDER=/Users/vboxautostartdb
+
+if [ -f "${VBOX_AUTOSTART_SOURCE}" ]; then
+    echo "Setting up VirtualBox Autostart."
+
+    echo "Create /etc/vbox folder."
+    sudo mkdir -p /etc/vbox
+
+    echo "Copy autostart.cfg to /etc/vbox."
+    sudo cp autostart.cfg /etc/vbox
+
+    # Appears this is unnecessary on OS X.
+    # 
+    # echo "Create /Users/vboxautostartdb folder."
+    # sudo mkdir -p "${VBOX_AUTOSTARTDB_FOLDER}"
+    # sudo chown -Rv root:staff "${VBOX_AUTOSTARTDB_FOLDER}"
+    # sudo chmod 1770 "${VBOX_AUTOSTARTDB_FOLDER}"
+
+    echo "Copy ${VBOX_AUTOSTART_SOURCE} to ${VBOX_AUTOSTART_TARGET}."
+    sudo cp "${VBOX_AUTOSTART_SOURCE}" "${VBOX_AUTOSTART_TARGET}"
+    sudo defaults write "${VBOX_AUTOSTART_TARGET}" Disabled -bool false
+    sudo sudo plutil -convert xml1 "${VBOX_AUTOSTART_TARGET}"
+
+    # Appears this is unnecessary on OS X, and you'll get an error if you try.
+    # 
+    # echo "To enable autostarts for a particular user, make sure to run"
+    # echo "VBoxManage setproperty autostartdbpath ${VBOX_AUTOSTARTDB_FOLDER}"
+    # echo "as that user."
+    echo
+    echo "To manually start the service, all the autostartable VMs, use the following command:"
+    echo "launchctl load /Library/LaunchDaemons/org.virtualbox.vboxautostart.plist"
+fi
