@@ -83,7 +83,8 @@ if [ -f "${VBOX_AUTOSTART_SOURCE}" ]; then
     echo "Copy ${VBOX_AUTOSTART_SOURCE} to ${VBOX_AUTOSTART_TARGET}."
     sudo cp "${VBOX_AUTOSTART_SOURCE}" "${VBOX_AUTOSTART_TARGET}"
     sudo defaults write "${VBOX_AUTOSTART_TARGET}" Disabled -bool false
-    sudo sudo plutil -convert xml1 "${VBOX_AUTOSTART_TARGET}"
+    sudo plutil -convert xml1 "${VBOX_AUTOSTART_TARGET}"
+    sudo chmod 755 "${VBOX_AUTOSTART_TARGET}"
 
     # Appears this is unnecessary on OS X, and you'll get an error if you try.
     # 
