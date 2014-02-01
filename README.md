@@ -16,3 +16,9 @@ A script to set up VirtualBox using TLS cryptography to secure the link.
 Adds a user and a password to the specified Virtual Machine.
 
 To log in using Microsoft Remote Desktop Connection, you have to make sure you specify the username and password before attempting to connect, and save these credentials.
+
+
+backup and backup-settings
+==========================
+
+A pair of scripts to back up VirtualBox virtual machines, by saving the current machine state (i.e. stopping the machines), then using Duplicity to send the current disk images and saved state to a backup system.
