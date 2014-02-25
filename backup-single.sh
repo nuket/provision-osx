@@ -3,10 +3,12 @@
 #
 # Usage: 
 # 
-# backup.sh [-d] [-n name]
+# backup.sh [-d] [-n name] [-R] [-N]
 #
 #     -d    Dry run
 #     -n    Name of VM to backup
+#     -R    Reset the VM after backup
+#     -N    Do not start VM after backup
 #
 
 # Read in passwords and other settings from separate, non-checked-in file.
@@ -18,17 +20,17 @@
 # FTP_PASSWORD
 # MAILTO
 #
-# And a function called backupOperation() which gets called to do the
-# actual backup process.
 
 source backup-settings.sh set
 
 DRY_RUN=""
 VMNAME=""
+START_VM=1
+RESET_VM=0
 
 # See: http://www.pclinuxos.com/forum/index.php?topic=103651.0
 
-while getopts ":dn:" opt; do
+while getopts ":dn:RN" opt; do
     case $opt in
 	d)
 	    echo "Dry run."
@@ -37,6 +39,14 @@ while getopts ":dn:" opt; do
 	n) 
 	    VMNAME="${OPTARG}"
 	    echo "Backing up single VM: ${VMNAME}"
+	    ;;
+	N)
+	    echo "Don't start the VM again after backup."
+	    START_VM=0
+	    ;;
+	R)
+	    echo "Reset the VM after starting it again."
+	    RESET_VM=1
 	    ;;
     esac
 done
@@ -67,11 +77,18 @@ else
 
     RUNNING=$(vboxmanage list runningvms | grep "${VMNAME}" | wc -l | tr -d ' ')
 
-    if [ "${RUNNING}" -eq "0" ]; then
+    if [ "${RUNNING}" -eq "0" ] && [ "${START_VM}" -eq "1" ]; then
 	echo "Wake the virtual machine: ${VMNAME}"
 
 	echo "vboxmanage startvm \"${VMNAME}\" --type headless"
 	vboxmanage startvm "${VMNAME}" --type headless
+    fi
+
+    if [ "$START_VM" -eq "1" ] && [ "${RESET_VM}" -eq "1" ]; then
+	echo "Reset the restarted VM."
+	sleep 30
+
+	vboxmanage controlvm "${VMNAME}" reset
     fi
 
     echo "Mail backup logs."
