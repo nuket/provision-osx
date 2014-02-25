@@ -37,6 +37,7 @@ while getopts ":dn:" opt; do
 	n) 
 	    VMNAME="${OPTARG}"
 	    echo "Backing up single VM: ${VMNAME}"
+	    ;;
     esac
 done
 
