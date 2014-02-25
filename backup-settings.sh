@@ -10,6 +10,7 @@
 function backupOperation () {
     PARAM_DRY_RUN=$1
 
+    duplicity remove-all-but-n-full 2 --force "sftp://user@host/VirtualBox VMs"
     duplicity --full-if-older-than 1W ${PARAM_DRY_RUN} "~/VirtualBox VMs" "sftp://user@host/VirtualBox VMs"
 }
 
@@ -17,6 +18,9 @@ if [ $1 == "set" ]; then
     echo "Exporting extra path."
 
     export PATH=${HOME}/devtools/homebrew/bin:/usr/local/bin:${HOME}/Library/Python/2.7/bin:${PATH}
+
+    echo "Exporting sftp target."
+    export SFTP_TARGET="user@host"
 
     echo "Exporting passwords."
 
